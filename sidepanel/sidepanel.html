@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gemini 导图</title>
+  <link rel="stylesheet" href="../lib/mind-elixir/MindElixir.css" />
+  <link rel="stylesheet" href="sidepanel.css" />
+</head>
+<body>
+  <header class="gmm-header">
+    <div class="gmm-title-row">
+      <span class="gmm-title">Gemini 导图</span>
+      <div class="gmm-header-actions">
+        <div class="gmm-export-wrap">
+          <button id="btnExport" class="gmm-icon-btn">导出</button>
+          <div id="exportMenu" class="gmm-export-menu" hidden>
+            <button id="btnExportPdf" class="gmm-export-item">导出 PDF</button>
+            <button id="btnExportXmind" class="gmm-export-item">导出 XMind</button>
+          </div>
+        </div>
+        <button id="btnSettings" class="gmm-icon-btn" title="设置 DeepSeek API Key">设置</button>
+      </div>
+    </div>
+    <div class="gmm-controls">
+      <div class="gmm-modes" role="tablist">
+        <button id="modeRule" class="gmm-mode active" role="tab">规则解析</button>
+        <button id="modeAI" class="gmm-mode" role="tab">AI 总结</button>
+      </div>
+      <button id="btnGenerate" class="gmm-primary">生成导图</button>
+    </div>
+  </header>
+
+  <div id="updateBar" class="gmm-update-bar" hidden>
+    <span>会话内容已更新</span>
+    <button id="btnRefresh" class="gmm-mini-btn">刷新导图</button>
+  </div>
+
+  <div id="status" class="gmm-status" hidden></div>
+
+  <div id="map" class="gmm-map"></div>
+
+  <div id="empty" class="gmm-empty">
+    <p class="gmm-empty-title">Gemini Chat MindMap</p>
+    <p id="emptyText">正在等待 Gemini 页面…</p>
+  </div>
+
+  <script src="../lib/mind-elixir/MindElixir.iife.js"></script>
+  <script src="../lib/jspdf/jspdf.umd.min.js"></script>
+  <script src="../lib/jszip/jszip.min.js"></script>
+  <script src="treeBuilder.js"></script>
+  <script src="sidepanel.js"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+/* Gemini Chat MindMap - Content Script 样式
+ * 通过 manifest 注入（不受页面 CSP 限制），类名统一 gmm- 前缀避免冲突 */
+
+.gmm-host {
+  position: absolute;
+  z-index: 2147483646;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.gmm-host.gmm-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.gmm-hover-btn {
+  appearance: none;
+  border: none;
+  border-radius: 12px;
+  padding: 3px 10px;
+  font-size: 12px;
+  line-height: 16px;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: #fff;
+  background: #1a73e8;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  user-select: none;
+}
+
+.gmm-hover-btn:hover {
+  background: #1765cc;
+}
+
+/* 消息定位闪烁 */
+.gmm-flash {
+  animation: gmm-flash-anim 0.9s ease-in-out 2;
+  border-radius: 12px;
+}
+
+@keyframes gmm-flash-anim {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(26, 115, 232, 0);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(26, 115, 232, 0.6);
+  }
+}

@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Gemini Chat MindMap · 项目展示</title>
+<style>
+  :root {
+    --bg1: #0f1c3f;
+    --bg2: #1a3a6e;
+    --accent: #4c8dff;
+    --accent2: #7ab8ff;
+    --text: #eef3ff;
+    --subtle: #a8b8d8;
+    --card: rgba(255, 255, 255, 0.06);
+    --border: rgba(255, 255, 255, 0.14);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2));
+    color: var(--text);
+  }
+
+  /* ---------- 幻灯片框架 ---------- */
+  .deck { height: 100%; position: relative; }
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 6vh 8vw;
+    opacity: 0; visibility: hidden;
+    transform: translateY(24px);
+    transition: opacity .45s ease, transform .45s ease, visibility .45s;
+  }
+  .slide.active { opacity: 1; visibility: visible; transform: translateY(0); }
+
+  h1 { font-size: 4.2vw; font-weight: 700; letter-spacing: .02em; }
+  h2 { font-size: 2.6vw; font-weight: 700; margin-bottom: 4vh; color: var(--text); }
+  h2 .no {
+    display: inline-block; margin-right: .5em;
+    color: var(--accent); font-weight: 800;
+  }
+  .subtitle { margin-top: 2vh; font-size: 1.4vw; color: var(--subtle); }
+  .badge {
+    display: inline-block; padding: .3em 1em; border-radius: 999px;
+    background: var(--card); border: 1px solid var(--border);
+    font-size: .95vw; color: var(--accent2); margin-bottom: 3vh;
+  }
+
+  /* ---------- 内容卡片 ---------- */
+  .grid { display: grid; gap: 2.2vh 2vw; width: 100%; max-width: 1100px; }
+  .grid.cols-2 { grid-template-columns: 1fr 1fr; }
+  .grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 16px; padding: 2.6vh 1.6vw;
+  }
+  .card h3 { font-size: 1.25vw; margin-bottom: 1vh; color: var(--accent2); }
+  .card p, .card li { font-size: 1.02vw; line-height: 1.75; color: var(--subtle); }
+  .card ul { padding-left: 1.2em; }
+  .card .em { color: var(--text); font-weight: 600; }
+
+  code, .code {
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    background: rgba(76, 141, 255, .15); color: var(--accent2);
+    border-radius: 6px; padding: .1em .45em; font-size: .92em;
+  }
+  pre {
+    width: 100%; max-width: 1000px;
+    background: #0a142e; border: 1px solid var(--border); border-radius: 14px;
+    padding: 2.4vh 1.6vw; font-size: .95vw; line-height: 1.7;
+    color: #c9dcff; overflow: auto; max-height: 52vh;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  }
+  pre .k { color: #7ab8ff; }
+  pre .s { color: #9ecea0; }
+  pre .c { color: #6b7ba0; }
+
+  /* 架构图 */
+  .arch { display: flex; align-items: center; gap: 1.2vw; width: 100%; max-width: 1100px; justify-content: center; }
+  .arch .node {
+    flex: 1; background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 2.4vh 1vw; text-align: center;
+  }
+  .arch .node h3 { font-size: 1.1vw; color: var(--accent2); margin-bottom: .8vh; }
+  .arch .node p { font-size: .88vw; color: var(--subtle); line-height: 1.6; }
+  .arch .arrow { font-size: 1.6vw; color: var(--accent); flex: none; }
+
+  /* 流程条 */
+  .flow { display: flex; gap: 1vw; align-items: stretch; width: 100%; max-width: 1100px; }
+  .flow .step {
+    flex: 1; background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 2.2vh 1.2vw; position: relative;
+  }
+  .flow .step::after {
+    content: '→'; position: absolute; right: -1.05vw; top: 50%;
+    transform: translateY(-50%); color: var(--accent); font-size: 1.3vw;
+  }
+  .flow .step:last-child::after { content: ''; }
+  .flow .step h3 { font-size: 1.05vw; color: var(--accent2); margin-bottom: .8vh; }
+  .flow .step p { font-size: .9vw; color: var(--subtle); line-height: 1.6; }
+
+  /* 演示占位图 */
+  .demo-shot {
+    width: 100%; max-width: 900px; height: 46vh;
+    border: 1px dashed var(--border); border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--card); color: var(--subtle); font-size: 1.05vw;
+    flex-direction: column; gap: 1vh;
+  }
+  .demo-shot .icon { font-size: 3vw; }
+
+  /* ---------- 导航 ---------- */
+  .progress {
+    position: fixed; left: 0; top: 0; height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width .35s ease; z-index: 10;
+  }
+  .hud {
+    position: fixed; right: 24px; bottom: 18px;
+    font-size: 13px; color: var(--subtle); z-index: 10;
+  }
+  .hint {
+    position: fixed; left: 24px; bottom: 18px;
+    font-size: 13px; color: var(--subtle); z-index: 10;
+  }
+  .nav {
+    position: fixed; top: 50%; transform: translateY(-50%);
+    width: 46px; height: 46px; border-radius: 50%;
+    border: 1px solid var(--border); background: var(--card);
+    color: var(--text); font-size: 20px; cursor: pointer; z-index: 10;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .2s;
+  }
+  .nav:hover { background: rgba(255,255,255,.14); }
+  .nav.prev { left: 18px; }
+  .nav.next { right: 18px; }
+  @media (max-width: 900px) {
+    h1 { font-size: 7vw; } h2 { font-size: 5vw; }
+    .card h3 { font-size: 3.4vw; } .card p, .card li { font-size: 3vw; }
+    .grid.cols-2, .grid.cols-3 { grid-template-columns: 1fr; }
+    pre { font-size: 2.6vw; }
+  }
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+  <!-- 1 封面 -->
+  <section class="slide">
+    <div class="badge">Chrome 扩展 · Manifest V3</div>
+    <h1>Gemini Chat MindMap</h1>
+    <p class="subtitle">把网页版 Gemini 的长对话，一键变成可双向跳转的思维导图</p>
+    <p class="subtitle" style="margin-top:4vh;font-size:1vw">规则解析 · AI 总结（DeepSeek）· 双向定位 · PDF / XMind 导出</p>
+  </section>
+
+  <!-- 2 背景 -->
+  <section class="slide">
+    <h2><span class="no">01</span>为什么做这个</h2>
+    <div class="grid cols-3">
+      <div class="card"><h3>长对话难回顾</h3><p>Gemini 会话动辄几十轮，想找回某段讨论只能在页面里<span class="em">反复滚动查找</span>，效率极低。</p></div>
+      <div class="card"><h3>思路难梳理</h3><p>线性聊天流无法呈现<span class="em">主题结构与逻辑脉络</span>，复习、复盘时缺少全局视角。</p></div>
+      <div class="card"><h3>内容难沉淀</h3><p>对话内容<span class="em">锁在网页里</span>，无法方便地导出为文档或脑图，进入个人知识库。</p></div>
+    </div>
+  </section>
+
+  <!-- 3 功能总览 -->
+  <section class="slide">
+    <h2><span class="no">02</span>功能总览</h2>
+    <div class="grid cols-2">
+      <div class="card"><h3>规则解析</h3><p>按对话轮次即时生成导图，零成本；长回答按标题/段落自动切分子分支。</p></div>
+      <div class="card"><h3>AI 总结</h3><p>调用 DeepSeek（chat / reasoner 可选）按<span class="em">主题域聚合</span>提炼大纲，带来源的节点可跳回原文。</p></div>
+      <div class="card"><h3>双向跳转</h3><p>点导图节点 → 页面滚动定位并闪烁；悬停原文点「导图」→ 侧边栏展开路径并高亮节点。</p></div>
+      <div class="card"><h3>一键导出</h3><p>导出 <span class="em">PDF</span>（整页等比）与 <span class="em">XMind</span> 文件，可直接进入 XMind 继续编辑。</p></div>
+    </div>
+  </section>
+
+  <!-- 4 演示 -->
+  <section class="slide">
+    <h2><span class="no">03</span>效果演示</h2>
+    <div class="demo-shot">
+      <div class="icon">🗺️</div>
+      <div>此处可替换为扩展实际运行截图</div>
+      <div style="font-size:.85vw">左侧：Gemini 会话页（含悬停「导图」按钮）　右侧：侧边栏思维导图</div>
+    </div>
+  </section>
+
+  <!-- 5 架构 -->
+  <section class="slide">
+    <h2><span class="no">04</span>技术架构</h2>
+    <div class="arch">
+      <div class="node"><h3>Content Script</h3><p>注入 gemini.google.com<br/>DOM 解析 · 定位闪烁<br/>悬停按钮 · 变更检测</p></div>
+      <div class="arrow">⇄</div>
+      <div class="node"><h3>Background SW</h3><p>侧边栏开关行为<br/>原文→导图请求中转<br/>（storage.session 暂存）</p></div>
+      <div class="arrow">⇄</div>
+      <div class="node"><h3>Side Panel</h3><p>mind-elixir 渲染导图<br/>规则/AI 双模式<br/>双向跳转 · PDF/XMind 导出</p></div>
+    </div>
+    <p style="margin-top:3.5vh;color:var(--subtle);font-size:1vw">零构建方案：原生 JS + vendored 库（mind-elixir / jsPDF / JSZip），无打包工具，维护成本最低</p>
+  </section>
+
+  <!-- 6 核心：DOM 解析 -->
+  <section class="slide">
+    <h2><span class="no">05</span>核心实现 · 容错 DOM 解析</h2>
+    <p style="color:var(--subtle);font-size:1.05vw;margin-bottom:2.5vh">Gemini 前端类名随版本混淆变化，解析层采用<span style="color:var(--accent2)">选择器链降级</span>策略，独立封装便于维护：</p>
+    <pre><span class="c">// content/content.js</span>
+<span class="k">const</span> USER_SEL = <span class="s">'user-query'</span>, MODEL_SEL = <span class="s">'model-response'</span>;
+
+<span class="k">function</span> findMessageEls() {
+  <span class="c">// ① chat-history 内的自定义元素（最稳定）</span>
+  <span class="c">// ② chat-window / conversation-container 范围</span>
+  <span class="c">// ③ document 全局兜底 + 去嵌套 + 文档序排序</span>
+}
+<span class="c">// 每条消息 → { type, index, text, headings[] }</span>
+<span class="c">// index 即双向跳转的锚点</span></pre>
+  </section>
+
+  <!-- 7 核心：双向跳转 -->
+  <section class="slide">
+    <h2><span class="no">06</span>核心实现 · 双向跳转</h2>
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>导图 → 原文</h3>
+        <ul>
+          <li>节点 <code>data-nodeid</code> → payload Map 查到消息 <code>index</code></li>
+          <li><code>GMM_LOCATE</code> → 页面按 index 重查元素</li>
+          <li><code>scrollIntoView</code> 居中 + CSS 闪烁高亮</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>原文 → 导图</h3>
+        <ul>
+          <li>悬停消息出现「导图」按钮（页面注入样式，不受 CSP 影响）</li>
+          <li>点击 → background 暂存 <code>pendingHighlight</code> 并自动打开侧边栏</li>
+          <li>面板展开祖先链 → 滚动至节点 → 闪烁</li>
+        </ul>
+      </div>
+    </div>
+    <p style="margin-top:3vh;color:var(--subtle);font-size:1vw">锚点用「会话内序号」而非 DOM 引用：定位时实时重查，<span style="color:var(--accent2)">天然容忍 Gemini 的重渲染</span></p>
+  </section>
+
+  <!-- 8 AI 管线 -->
+  <section class="slide">
+    <h2><span class="no">07</span>AI 总结管线（DeepSeek）</h2>
+    <div class="flow">
+      <div class="step"><h3>① 转录</h3><p>轮次分组 + 【第n轮】标注，单条 2500 字 / 总量 45k 字截断</p></div>
+      <div class="step"><h3>② 提示词</h3><p>要求按主题域聚合、2~4 层结构、ref 标注来源轮次、严格 JSON</p></div>
+      <div class="step"><h3>③ 调用</h3><p>deepseek-chat（JSON 模式）或 deepseek-reasoner（更高质量）</p></div>
+      <div class="step"><h3>④ 清洗</h3><p>剥离围栏宽松解析 → 校验层级/字数 → ref 轮次号映射回消息 index</p></div>
+    </div>
+  </section>
+
+  <!-- 9 导出 -->
+  <section class="slide">
+    <h2><span class="no">08</span>导出能力</h2>
+    <div class="grid cols-2">
+      <div class="card">
+        <h3>PDF</h3>
+        <p>mind-elixir <code>exportPng()</code> 渲染整图 → jsPDF 按导图<span class="em">实际宽高建同尺寸页面</span> → 直接下载，无裁剪无缩放。</p>
+      </div>
+      <div class="card">
+        <h3>XMind</h3>
+        <p>导图树转 XMind 2020+ 的 <code>content.json</code>（topic→title、children→attached）→ JSZip 打包 <code>.xmind</code> → XMind 打开可继续编辑。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 难点 -->
+  <section class="slide">
+    <h2><span class="no">09</span>踩过的坑与解法</h2>
+    <div class="grid cols-3">
+      <div class="card"><h3>扩展重载脚本失效</h3><p>重载后旧 content script 上下文死亡，通信必挂。<br/><span class="em">解：</span>通信失败时用 <code>chrome.scripting</code> 自动重注入 + 旧脚本清理注册表。</p></div>
+      <div class="card"><h3>IIFE 导出形式</h3><p>mind-elixir IIFE 全局变量是模块对象而非类。<br/><span class="em">解：</span><code>MindElixir.default || MindElixir</code> 兼容取值。</p></div>
+      <div class="card"><h3>无障碍文本污染</h3><p>抓取文本混入 "You said" 等屏幕阅读器前缀。<br/><span class="em">解：</span>文本提取后正则剥离已知前缀。</p></div>
+    </div>
+  </section>
+
+  <!-- 11 测试 -->
+  <section class="slide">
+    <h2><span class="no">10</span>质量保障</h2>
+    <div class="grid cols-2">
+      <div class="card"><h3>单元测试 × 34</h3><p>树构建抽为纯函数模块 <code>treeBuilder.js</code>：轮次分组、50 轮截断、ref 映射、AI JSON 容错、深度防护等 <span class="em">34 项断言全过</span>。</p></div>
+      <div class="card"><h3>手动测试清单</h3><p>覆盖：规则/AI 生成、双向跳转、会话更新提示、长会话截断、空会话、无效 Key、断网等边界场景。</p></div>
+    </div>
+  </section>
+
+  <!-- 12 展望 -->
+  <section class="slide">
+    <h2><span class="no">11</span>后续规划</h2>
+    <div class="grid cols-3">
+      <div class="card"><h3>历史会话</h3><p>支持从侧边栏会话列表选择历史对话生成导图。</p></div>
+      <div class="card"><h3>更多平台</h3><p>抽象解析层，适配 ChatGPT / Claude 等对话站点。</p></div>
+      <div class="card"><h3>更多导出</h3><p>Markdown 大纲、OPML、PNG 长图等格式。</p></div>
+    </div>
+  </section>
+
+  <!-- 13 结尾 -->
+  <section class="slide">
+    <h1 style="font-size:3.4vw">让每一次 AI 对话<br/>都能沉淀为结构化知识</h1>
+    <p class="subtitle">Gemini Chat MindMap · 谢谢观看</p>
+  </section>
+
+</div>
+
+<div class="progress" id="progress"></div>
+<button class="nav prev" id="btnPrev" aria-label="上一页">‹</button>
+<button class="nav next" id="btnNext" aria-label="下一页">›</button>
+<div class="hint">← → 翻页 · Home/End 跳转</div>
+<div class="hud" id="hud">1 / 13</div>
+
+<script>
+(function () {
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+  var cur = 0;
+  var hud = document.getElementById('hud');
+  var progress = document.getElementById('progress');
+
+  function show(i) {
+    cur = Math.max(0, Math.min(total - 1, i));
+    slides.forEach(function (s, idx) { s.classList.toggle('active', idx === cur); });
+    hud.textContent = (cur + 1) + ' / ' + total;
+    progress.style.width = ((cur + 1) / total * 100) + '%';
+  }
+
+  document.getElementById('btnPrev').addEventListener('click', function () { show(cur - 1); });
+  document.getElementById('btnNext').addEventListener('click', function () { show(cur + 1); });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') { e.preventDefault(); show(cur + 1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') { e.preventDefault(); show(cur - 1); }
+    else if (e.key === 'Home') { show(0); }
+    else if (e.key === 'End') { show(total - 1); }
+  });
+
+  // 触摸滑动支持
+  var touchX = null;
+  document.addEventListener('touchstart', function (e) { touchX = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener('touchend', function (e) {
+    if (touchX == null) return;
+    var dx = e.changedTouches[0].clientX - touchX;
+    if (dx < -50) show(cur + 1);
+    else if (dx > 50) show(cur - 1);
+    touchX = null;
+  }, { passive: true });
+
+  show(0);
+})();
+</script>
+</body>
+</html>

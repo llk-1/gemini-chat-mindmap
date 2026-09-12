@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gemini 导图 - 设置</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <main class="card">
+    <h1>Gemini 导图 · 设置</h1>
+
+    <section>
+      <label for="apiKey">DeepSeek API Key</label>
+      <input id="apiKey" type="password" placeholder="sk-..." autocomplete="off" spellcheck="false" />
+      <p class="hint">仅用于调用 <code>api.deepseek.com</code> 生成 AI 总结，保存在本机（chrome.storage.local），不会上传到其他服务器。</p>
+      <p class="hint">获取地址：<a href="https://platform.deepseek.com/api_keys" target="_blank" rel="noreferrer">platform.deepseek.com/api_keys</a></p>
+    </section>
+
+    <section>
+      <label for="model">总结模型</label>
+      <select id="model">
+        <option value="deepseek-chat">deepseek-chat（V3，快，便宜）</option>
+        <option value="deepseek-reasoner">deepseek-reasoner（R1，总结质量更高，较慢）</option>
+      </select>
+      <p class="hint">觉得总结质量不够好时，切换到 reasoner 试试。</p>
+    </section>
+
+    <div class="actions">
+      <button id="btnSave" class="primary">保存</button>
+      <button id="btnTest">测试连接</button>
+      <span id="msg" class="msg"></span>
+    </div>
+  </main>
+
+  <script src="options.js"></script>
+</body>
+</html>
