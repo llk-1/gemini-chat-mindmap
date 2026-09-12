@@ -234,25 +234,9 @@
     <p style="margin-top:3.5vh;color:var(--subtle);font-size:1vw">零构建方案：原生 JS + vendored 库（mind-elixir / jsPDF / JSZip），无打包工具，维护成本最低</p>
   </section>
 
-  <!-- 6 核心：DOM 解析 -->
-  <section class="slide">
-    <h2><span class="no">05</span>核心实现 · 容错 DOM 解析</h2>
-    <p style="color:var(--subtle);font-size:1.05vw;margin-bottom:2.5vh">Gemini 前端类名随版本混淆变化，解析层采用<span style="color:var(--accent2)">选择器链降级</span>策略，独立封装便于维护：</p>
-    <pre><span class="c">// content/content.js</span>
-<span class="k">const</span> USER_SEL = <span class="s">'user-query'</span>, MODEL_SEL = <span class="s">'model-response'</span>;
-
-<span class="k">function</span> findMessageEls() {
-  <span class="c">// ① chat-history 内的自定义元素（最稳定）</span>
-  <span class="c">// ② chat-window / conversation-container 范围</span>
-  <span class="c">// ③ document 全局兜底 + 去嵌套 + 文档序排序</span>
-}
-<span class="c">// 每条消息 → { type, index, text, headings[] }</span>
-<span class="c">// index 即双向跳转的锚点</span></pre>
-  </section>
-
   <!-- 7 核心：双向跳转 -->
   <section class="slide">
-    <h2><span class="no">06</span>核心实现 · 双向跳转</h2>
+    <h2><span class="no">05</span>核心实现 · 双向跳转</h2>
     <div class="grid cols-2">
       <div class="card">
         <h3>导图 → 原文</h3>
@@ -276,7 +260,7 @@
 
   <!-- 8 AI 管线 -->
   <section class="slide">
-    <h2><span class="no">07</span>AI 总结管线（DeepSeek）</h2>
+    <h2><span class="no">06</span>AI 总结管线（DeepSeek）</h2>
     <div class="flow">
       <div class="step"><h3>① 转录</h3><p>轮次分组 + 【第n轮】标注，单条 2500 字 / 总量 45k 字截断</p></div>
       <div class="step"><h3>② 提示词</h3><p>要求按主题域聚合、2~4 层结构、ref 标注来源轮次、严格 JSON</p></div>
@@ -287,7 +271,7 @@
 
   <!-- 9 导出 -->
   <section class="slide">
-    <h2><span class="no">08</span>导出能力</h2>
+    <h2><span class="no">07</span>导出能力</h2>
     <div class="grid cols-2">
       <div class="card">
         <h3>PDF</h3>
@@ -302,7 +286,7 @@
 
   <!-- 10 难点 -->
   <section class="slide">
-    <h2><span class="no">09</span>踩过的坑与解法</h2>
+    <h2><span class="no">08</span>踩过的坑与解法</h2>
     <div class="grid cols-3">
       <div class="card"><h3>扩展重载脚本失效</h3><p>重载后旧 content script 上下文死亡，通信必挂。<br/><span class="em">解：</span>通信失败时用 <code>chrome.scripting</code> 自动重注入 + 旧脚本清理注册表。</p></div>
       <div class="card"><h3>IIFE 导出形式</h3><p>mind-elixir IIFE 全局变量是模块对象而非类。<br/><span class="em">解：</span><code>MindElixir.default || MindElixir</code> 兼容取值。</p></div>
@@ -312,7 +296,7 @@
 
   <!-- 11 测试 -->
   <section class="slide">
-    <h2><span class="no">10</span>质量保障</h2>
+    <h2><span class="no">09</span>质量保障</h2>
     <div class="grid cols-2">
       <div class="card"><h3>单元测试 × 34</h3><p>树构建抽为纯函数模块 <code>treeBuilder.js</code>：轮次分组、50 轮截断、ref 映射、AI JSON 容错、深度防护等 <span class="em">34 项断言全过</span>。</p></div>
       <div class="card"><h3>手动测试清单</h3><p>覆盖：规则/AI 生成、双向跳转、会话更新提示、长会话截断、空会话、无效 Key、断网等边界场景。</p></div>
@@ -321,7 +305,7 @@
 
   <!-- 12 展望 -->
   <section class="slide">
-    <h2><span class="no">11</span>后续规划</h2>
+    <h2><span class="no">10</span>后续规划</h2>
     <div class="grid cols-3">
       <div class="card"><h3>历史会话</h3><p>支持从侧边栏会话列表选择历史对话生成导图。</p></div>
       <div class="card"><h3>更多平台</h3><p>抽象解析层，适配 ChatGPT / Claude 等对话站点。</p></div>
@@ -331,7 +315,7 @@
 
   <!-- 仓库 -->
   <section class="slide">
-    <h2><span class="no">12</span>开源仓库</h2>
+    <h2><span class="no">11</span>开源仓库</h2>
     <div style="display:flex;flex-direction:column;gap:2.6vh;align-items:center">
       <a href="https://github.com/llk-1/gemini-chat-mindmap" target="_blank" rel="noreferrer">
         <img src="https://github-readme-stats.vercel.app/api/pin/?username=llk-1&amp;repo=gemini-chat-mindmap&amp;theme=tokyonight" alt="Gemini Chat MindMap GitHub 仓库卡片" style="width:min(560px,60vw);border-radius:12px" />
